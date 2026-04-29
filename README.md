@@ -5,7 +5,7 @@ Este repositorio contiene los microservicios que forman parte del **Proyecto ClÃ
 ---
 
 ## ðŸ“‚ Estructura del repositorio
-https://difficult-tadpole-88e.notion.site/Pagos-351679506dff802588afcd3d93aa8296
+https://difficult-tadpole-88e.notion.site/Unit-2-Microservicios-para-Clinica-34f679506dff802dbf7fe69933282628?pvs=73
 /microservicios-proyecto-clinica
   /pagos
   /

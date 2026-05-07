@@ -1,5 +1,10 @@
 package com.clinica.pagos.repository;
 
-public interface PagoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import com.clinica.pagos.model.Pago;
+
+@Repository
+public interface PagoRepository extends JpaRepository<Pago, Integer>{
 }

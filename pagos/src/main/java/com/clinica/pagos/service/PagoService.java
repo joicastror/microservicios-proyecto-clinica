@@ -1,5 +1,92 @@
 package com.clinica.pagos.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.clinica.pagos.dto.PagoCrearDTO;
+import com.clinica.pagos.dto.PagoMostrarDTO;
+import com.clinica.pagos.model.Pago;
+import com.clinica.pagos.repository.PagoRepository;
+
+@Service
 public class PagoService {
 
+    private final PagoRepository repository;
+
+    public PagoService(PagoRepository repository) {
+        this.repository = repository;
+    }
+
+    // Listar todos los PagoMostrarDTO
+    public List<PagoMostrarDTO> listarTodos() {
+        List<Pago> pagos = repository.findAll();
+        List<PagoMostrarDTO> dtos = new ArrayList<>();
+        
+        for (Pago pago : pagos) {
+            dtos.add(convertirADTO(pago));
+        }
+        
+        return dtos;
+    }
+
+    // Buscar por el ID del PagoMostrarDTO
+    public PagoMostrarDTO buscarPorId(Integer id) {
+        Optional<Pago> pago = repository.findById(id);
+        if (pago.isPresent()) {
+            return convertirADTO(pago.get());
+        }
+        return null;
+    }
+    
+public PagoMostrarDTO registrarPago(PagoCrearDTO dto) {
+    Pago pago = new Pago();
+    pago.setIdCita(dto.getIdCita());
+    pago.setIdPaciente(dto.getIdPaciente());
+    pago.setMonto(dto.getMonto());
+    pago.setMetodoPago(dto.getMetodoPago());
+    pago.setEstado("COMPLETADO"); // Si el pago es exitoso
+
+    Pago guardado = repository.save(pago);
+    
+    // AQUÍ es donde normalmente enviarías una notificación o evento 
+    // a 'Citas' avisando que el pago se completó.
+    
+    return convertirADTO(guardado);
+    }
+
+    public void eliminarPorId(Integer id) {
+        repository.deleteById(id);
+    }
+
+    public PagoMostrarDTO actualizarPago(Integer id, PagoCrearDTO dto) {
+        Optional<Pago> pagoOp = repository.findById(id);
+        
+        if (pagoOp.isPresent()) {
+            Pago pagoExistente = pagoOp.get();
+            pagoExistente.setMonto(dto.getMonto());
+            pagoExistente.setMetodoPago(dto.getMetodoPago());
+            
+            // Si necesitas que el estado se actualice, podrías recibirlo en el DTO
+            // pagoExistente.setEstado(dto.getEstado()); 
+
+            Pago actualizado = repository.save(pagoExistente);
+            return convertirADTO(actualizado);
+        }
+        
+        return null;
+    }
+
+    // Método para convertir de Pago a PagoMostrarDTO
+    private PagoMostrarDTO convertirADTO(Pago pago) {
+        PagoMostrarDTO dto = new PagoMostrarDTO();
+        dto.setId(pago.getId());
+        dto.setMonto(pago.getMonto());
+        dto.setEstado(pago.getEstado());
+        dto.setMetodoPago(pago.getMetodoPago());
+        dto.setFechaCreacion(pago.getFechaCreacion());
+        return dto;
+    }
 }

@@ -8,5 +8,7 @@ public class UsuarioMostrarDTO {
     private String rut;
     private String nombre;
     private String email;
-    private String rol;
+    private String rol;             //"PACIENTE", "MEDICO", "ADMIN"
+    private String especialidad;    //Solo para médicos
+    private Boolean estado;
 }

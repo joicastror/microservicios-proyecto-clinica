@@ -2,6 +2,7 @@ package com.clinica.autenticacion.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,27 +24,29 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "El RUT es obligatorio")
+    @NotBlank
+    @Column(unique = true, nullable = false)
     private String rut;
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank
     private String nombre;
 
-    @NotBlank(message = "El email es obligatorio")
+    @NotBlank
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "La clave es obligatoria")
+    @NotBlank
     private String clave;
 
-    @NotBlank(message = "El rol es obligatorio")
-    private String rol;
+    @NotBlank
+    private String rol; //"PACIENTE", "MEDICO", "ADMIN"
 
-    @NotBlank(message = "El teléfono es obligatorio")
+    private String especialidad;
+
     private String telefono;
 
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @NotNull
     private LocalDate fechaNacimiento;
 
-    @NotNull(message = "El estado es obligatorio")
     private Boolean estado;
 }

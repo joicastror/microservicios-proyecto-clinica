@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.clinica.pagos.dto.PagoCrearDTO;
 import com.clinica.pagos.dto.PagoMostrarDTO;
 import com.clinica.pagos.model.Pago;
+import com.clinica.pagos.model.Usuario;
 import com.clinica.pagos.repository.PagoRepository;
 
 @Service
@@ -87,6 +89,23 @@ public PagoMostrarDTO registrarPago(PagoCrearDTO dto) {
         dto.setEstado(pago.getEstado());
         dto.setMetodoPago(pago.getMetodoPago());
         dto.setFechaCreacion(pago.getFechaCreacion());
+        
+        dto.setIdCita(pago.getIdCita());
+        dto.setIdPaciente(pago.getIdPaciente());
+        dto.setNombrePaciente(obtenerNombrePaciente(pago.getIdPaciente())); // <--- ¡Épico!
+        
         return dto;
+    }   
+    private String obtenerNombrePaciente(Integer id) {
+        if (id == null) return "No asignado";
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            // Asumiendo que Autenticación sigue en el 8081
+            String url = "http://localhost:8081/autenticacion/buscar/" + id;
+            Usuario user = restTemplate.getForObject(url, Usuario.class);
+            return (user != null) ? user.getNombre() : "Desconocido";
+        } catch (Exception e) {
+            return "Error de conexión con Autenticación";
+        }
     }
 }

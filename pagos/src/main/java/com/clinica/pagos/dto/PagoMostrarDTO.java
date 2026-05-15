@@ -15,4 +15,7 @@ public class PagoMostrarDTO {
     private String estado;
     private String metodoPago;
     private LocalDateTime fechaCreacion;
+    private Integer idCita;
+    private Integer idPaciente;
+    private String nombrePaciente;
 }

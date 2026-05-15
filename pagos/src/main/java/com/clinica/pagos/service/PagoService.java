@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.clinica.pagos.dto.PagoCrearDTO;
@@ -104,7 +105,7 @@ public PagoMostrarDTO registrarPago(PagoCrearDTO dto) {
             String url = "http://localhost:8081/autenticacion/buscar/" + id;
             Usuario user = restTemplate.getForObject(url, Usuario.class);
             return (user != null) ? user.getNombre() : "Desconocido";
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             return "Error de conexión con Autenticación";
         }
     }

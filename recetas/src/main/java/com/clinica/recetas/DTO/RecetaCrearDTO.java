@@ -1,0 +1,41 @@
+package com.clinica.recetas.DTO;
+
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RecetaCrearDTO {
+
+    @NotNull(message = "El id de la cita es obligatorio")
+    private Integer idCita;
+
+    @NotNull(message = "El id del paciente es obligatorio")
+    private Integer idPaciente;
+
+    @NotNull(message = "El id del médico es obligatorio")
+    private Integer idMedico;
+
+    @NotBlank(message = "El medicamento es obligatorio")
+    private String medicamento;
+
+    @NotBlank(message = "La indicación es obligatoria")
+    private String indicaciones;
+
+    @NotNull(message = "La fecha de emisión es obligatoria")
+    private LocalDate fechaEmision;
+
+    @NotNull(message = "La duración del tratamiento es obligatoria")
+    @Positive(message = "La duración debe ser mayor a 0")
+    private Integer duracionDias;
+}

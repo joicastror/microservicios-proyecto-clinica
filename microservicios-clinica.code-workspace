@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "autenticacion"
+		},
+		{
+			"path": "examenes"
+		},
+		{
+			"path": "ficha_clinica"
+		},
+		{
+			"path": "pagos"
+		},
+		{
+			"path": "recetas"
+		}
+	]
+}

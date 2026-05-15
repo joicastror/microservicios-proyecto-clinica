@@ -37,7 +37,6 @@ public class ExamenesService {
     public List<ExamenDetalleDTO> obtenerExamenDTO(Integer idPaciente) {
         List<Examenes> examenes = repository.findByIdPaciente(idPaciente);
         List<ExamenDetalleDTO> examenesDTO = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
 
         for (Examenes e : examenes) {
             ExamenDetalleDTO dto = new ExamenDetalleDTO();
@@ -61,6 +60,7 @@ public class ExamenesService {
                 dto.setNombreMedico(medico.getNombre());
             */
             
+            /*
             //Los Exception ex de abajo son por ejemplo si es que no encuentra la id o si el micro hizo boom
             String urlPaciente = "http://localhost:8081/autenticacion/buscar/" + e.getIdPaciente();
             try {
@@ -87,6 +87,11 @@ public class ExamenesService {
             } catch (Exception ex) {
                 dto.setNombreMedico("Error: No se pudo conectar con Autenticación");
             }
+            */
+
+            dto.setNombrePaciente(obtenerNombreDesdeAutenticacion(e.getIdPaciente()));
+            dto.setNombreMedico(obtenerNombreDesdeAutenticacion(e.getIdMedico()));
+
             examenesDTO.add(dto);
         }
         return examenesDTO;
@@ -103,22 +108,24 @@ public class ExamenesService {
         dto.setResultado(e.getResultado());
         dto.setEstado(e.getEstado());
 
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            String urlPac = "http://localhost:8081/autenticacion/buscar/" + e.getIdPaciente();
-            Usuario pac = restTemplate.getForObject(urlPac, Usuario.class);
-            dto.setNombrePaciente(pac != null ? pac.getNombre() : "No encontrado");
-        } catch (Exception ex) {
-            dto.setNombrePaciente("Error de conexión");
-        }
-        try {
-            String urlMed = "http://localhost:8081/autenticacion/buscar/" + e.getIdMedico();
-            Usuario med = restTemplate.getForObject(urlMed, Usuario.class);
-            dto.setNombreMedico(med != null ? med.getNombre() : "No encontrado");
-        } catch (Exception ex) {
-            dto.setNombreMedico("Error de conexión");
-        }
+        dto.setNombrePaciente(obtenerNombreDesdeAutenticacion(e.getIdPaciente()));
+        dto.setNombreMedico(obtenerNombreDesdeAutenticacion(e.getIdMedico()));
 
         return dto;
+    }
+
+    //Metodo para no copiar y pegar las url para el medico y el paciente y eso.
+    private String obtenerNombreDesdeAutenticacion(Integer id) {
+        if (id == null) return "No asignado";
+        
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8081/autenticacion/buscar/" + id;
+        
+        try {
+            Usuario user = restTemplate.getForObject(url, Usuario.class);
+            return (user != null) ? user.getNombre() : "No encontrado";
+        } catch (Exception e) {
+            return "Error de conexión";
+        }
     }
 }

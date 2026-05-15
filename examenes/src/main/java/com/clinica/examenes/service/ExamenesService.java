@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.clinica.examenes.dto.ExamenDetalleDTO;
@@ -124,7 +125,7 @@ public class ExamenesService {
         try {
             Usuario user = restTemplate.getForObject(url, Usuario.class);
             return (user != null) ? user.getNombre() : "No encontrado";
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             return "Error de conexión";
         }
     }

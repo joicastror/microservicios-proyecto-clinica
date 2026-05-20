@@ -43,8 +43,10 @@ Dado que la terminal de VS Code no reconoce el comando docker por restricciones 
 
     Para moverte rápido a la carpeta del proyecto sin usar mil veces ls, escribe cd seguido de un espacio, pega la ruta que copiaste en el Paso 1 y presiona Enter:
     Bash
-
     cd "ruta_que_copiaste_de_vsc"
+    
+    Por lo general la ruta en Docker en los pcs de la universidad es:
+    cd C:\Users\SSDD\microservicios-proyecto-clinica\
 
     Una vez situados en la carpeta del proyecto, ejecuta el comando para encender los contenedores en segundo plano:
     Bash

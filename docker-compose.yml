@@ -1,10 +1,17 @@
+version: '3.8'
+
 services:
-  mysql-db:
+  db-clinica:
     image: mysql:8.0
-    container_name: mysql_clinica
+    container_name: db-clinica
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: autenticacion
+      MYSQL_ROOT_PASSWORD:
     ports:
       - "3306:3306"
-    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+
+volumes:
+  db_data:

@@ -2,7 +2,6 @@ package com.clinica.pagos.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -16,7 +15,6 @@ import com.clinica.pagos.repository.PagoRepository;
 
 @Service
 public class PagoService {
-
     private final PagoRepository repository;
 
     public PagoService(PagoRepository repository) {
@@ -37,11 +35,9 @@ public class PagoService {
 
     // Buscar por el ID del PagoMostrarDTO
     public PagoMostrarDTO buscarPorId(Integer id) {
-        Optional<Pago> pago = repository.findById(id);
-        if (pago.isPresent()) {
-            return convertirADTO(pago.get());
-        }
-        return null;
+        Pago pago = repository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Pago no encontrado con id " + id + " no existe"));
+        return convertirADTO(pago);
     }
     
 public PagoMostrarDTO registrarPago(PagoCrearDTO dto) {
@@ -53,33 +49,37 @@ public PagoMostrarDTO registrarPago(PagoCrearDTO dto) {
     pago.setEstado("COMPLETADO"); // Si el pago es exitoso
 
     Pago guardado = repository.save(pago);
-    
-    // AQUÍ es donde normalmente enviarías una notificación o evento 
-    // a 'Citas' avisando que el pago se completó.
-    
+
+    try {
+        RestTemplate restTemplate = new RestTemplate();
+
+        java.util.Map<String, String> notiRequest = new java.util.HashMap<>();
+        notiRequest.put("destinatario", "Paciente ID: " + guardado.getIdPaciente());
+        notiRequest.put("mensaje", "Tu pago de $" + guardado.getMonto() + " ha sido registrado exitosamente.");
+        notiRequest.put("tipo", "EMAIL");
+
+        restTemplate.postForObject("http://localhost:8087/notificaciones/enviar", notiRequest, String.class);
+    } catch (RestClientException e) {
+        System.out.println("Error al enviar notificación: " + e.getMessage());
+    }
+ 
     return convertirADTO(guardado);
     }
 
     public void eliminarPorId(Integer id) {
+        buscarPorId(id);
         repository.deleteById(id);
     }
 
     public PagoMostrarDTO actualizarPago(Integer id, PagoCrearDTO dto) {
-        Optional<Pago> pagoOp = repository.findById(id);
-        
-        if (pagoOp.isPresent()) {
-            Pago pagoExistente = pagoOp.get();
-            pagoExistente.setMonto(dto.getMonto());
-            pagoExistente.setMetodoPago(dto.getMetodoPago());
-            
-            // Si necesitas que el estado se actualice, podrías recibirlo en el DTO
-            // pagoExistente.setEstado(dto.getEstado()); 
+        Pago pagoExistente = repository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("No se puede actualizar, pago no encontrado con id: " + id + " no existe"));
 
-            Pago actualizado = repository.save(pagoExistente);
-            return convertirADTO(actualizado);
-        }
-        
-        return null;
+        pagoExistente.setMonto(dto.getMonto());
+        pagoExistente.setMetodoPago(dto.getMetodoPago());
+
+        Pago actualizado = repository.save(pagoExistente);
+        return convertirADTO(actualizado);
     }
 
     // Método para convertir de Pago a PagoMostrarDTO

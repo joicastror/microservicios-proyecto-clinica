@@ -16,6 +16,8 @@ import com.clinica.pagos.dto.PagoCrearDTO;
 import com.clinica.pagos.dto.PagoMostrarDTO;
 import com.clinica.pagos.service.PagoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/pagos")
 public class PagoController {
@@ -26,40 +28,28 @@ public class PagoController {
     }
 
     @GetMapping("/listar")
-    public List<PagoMostrarDTO> obtenerTodos() {
-        return service.listarTodos();
+    public ResponseEntity<List<PagoMostrarDTO>> obtenerTodos() {
+        return ResponseEntity.ok(service.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public PagoMostrarDTO buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<PagoMostrarDTO> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<PagoMostrarDTO> crearPago(@RequestBody PagoCrearDTO dto) {
+    public ResponseEntity<PagoMostrarDTO> crearPago(@Valid @RequestBody PagoCrearDTO dto) {
         return ResponseEntity.ok(service.registrarPago(dto));
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminarPago(@PathVariable Integer id) {
-        PagoMostrarDTO pago = service.buscarPorId(id);
-        
-        if (pago != null) {
-            service.eliminarPorId(id);
-            return "Pago eliminado";
-        } else {
-            return "Pago no encontrado con id " + id;
-        }
+    public ResponseEntity<String> eliminarPago(@PathVariable Integer id) {
+        service.eliminarPorId(id);
+        return ResponseEntity.ok("Pago eliminado exitosamente con id " + id);
     }
 
     @PutMapping("/actualizar/{id}")
-    public String actualizarPago(@PathVariable Integer id, @RequestBody PagoCrearDTO dto) {
-        PagoMostrarDTO actualizado = service.actualizarPago(id, dto);
-
-        if (actualizado != null) {
-            return "Pago actualizado";
-        } else {
-            return "Pago no encontrado con id " + id;
-        }
+    public ResponseEntity<PagoMostrarDTO> actualizarPago(@PathVariable Integer id, @Valid @RequestBody PagoCrearDTO dto) {
+        return ResponseEntity.ok(service.actualizarPago(id, dto));
     }
 }
